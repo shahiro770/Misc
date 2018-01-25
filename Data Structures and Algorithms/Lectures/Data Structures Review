@@ -1,0 +1,20 @@
+Intro to Graphs and Trees
+	Trees as a Data Structure
+	Binary Trees
+	Binary Trees as ADTs
+
+Nonlinear Data Structures
+	Non sequential (can't access every element by going to the next)
+	A signle element can be connected to multple other elements
+	Graphs and Trees are examples of nonlinear data structures
+
+Graphs and Trees
+	Widley used data structures, much more powerful than sequential data structures
+	Examples of applications:
+		Databases
+		Network Security
+		Search Engines
+		Social Media
+		Navigation
+		Biochemistry
+		Compilers

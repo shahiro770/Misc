@@ -1,0 +1,25 @@
+#!/bin/bash
+# This is called an octothorp
+# producer
+# Shahir Chowdhury
+# 2017-11-01
+#
+# This program checks the number in storage and if the number is less than 100, it increments it by 8. Otherwise it terminates.
+# The number in storage is assumed to be between 5 and 90.
+
+num=`cat storage`
+
+if (( $num + 8 < 100 ))
+then
+	(( num += 8 ))
+	echo				#this will result in an unintentinoal newline character when producer is called first
+						#I would have had a newline character written in consumer.c, but due to something probably hardware related, 
+						#my computer seems to skip it
+	echo $num > storage
+	echo from producer: current total is $num
+	./consumer
+else
+	echo
+	echo from producer: Now I will take a rest!
+fi
+

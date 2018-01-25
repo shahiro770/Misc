@@ -1,0 +1,20 @@
+# !/bin/bash
+# selector
+# Shahir Chowdhury
+# 2017-10-04
+# 
+# This prints the lines between two words in the text file headandtail, including the lines where the words are included
+
+first=`grep -n $1 < headandtail | cut -b 1 | head -n 2 | tail -n 1`		#get the first line where the first word occurs
+second=`grep -n $2 < headandtail | cut -b 1 | head -n 2 | tail -n 1`	#get the first line where the second word occurs
+diff=$(($second - $first + 1))							#get the difference between both words 
+
+if ((diff > 0)) ; then										#print all lines between the two words, inclusive
+	head -n $second < headandtail | tail -n $diff
+else														#first word occurs on a line after the second
+	echo The first word comes after the second
+fi
+
+#Dr. Chen Notes
+#grep -n in part 1 an part 2
+#` means execute this part, and assign this result to the variable

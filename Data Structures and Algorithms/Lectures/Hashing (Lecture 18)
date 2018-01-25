@@ -1,0 +1,92 @@
+Hashing Lecture 18
+------------------
+Think about the efficiencies of search algorithms 
+
+
+Hashing is a technique used for storing and retrieving informatino as quickly as possible
+In general, a balanced binary tree can insert, delete, search, the data in O(logn)
+What if we want to insert delete, search to O(1). What does O(1) mean?
+
+Hashing Components
+	Any hashing technique or system has the following components:
+		Hash Table
+		Hash Function
+		Collision Resolution Method
+
+Hash Table
+	A hash table uses a hash functino to compute an index into an array of buckets or slots, from which the desired value can be found
+	With an array, we can store the record whose key is k, at position k of the array
+	Given a key k, we find the element whose key is k by just looking in the kth position of the array(direct addressing)
+	Note: Direct addressing is possible when we could allocate an array with one position for every possible key
+		So basically each key points to an address containing the value we want
+
+	//hashing function 
+	#define MAX 20
+	typedef struct Record{
+		String key;
+		Data data;
+	} Record;
+	Record websites[MAX];
+
+	We're gonna need a resizing function, so a dynamic sizing array is needed 
+
+The hash funtino is used to transfer a key into an array index
+	The hash function should map every unique key into a unique slot (bucket) index (perfect hash function)
+		E.g. get the same index for the same key
+			Hard to design a hash function that can guarantee that
+	A collision is a condition that occurs when the hash function can not map every unique key into a unique slot index
+
+How to Choose Hash Functions? (Good characteristics)
+	Minimum number of collisions
+	Distributes the keys evenly across the table
+	Calculation cost when mapping the key into index is minimum
+	Use all the information provided in the key
+	Have a high load factor for a given set of keys
+
+Hash(k)
+	Return k mod number //n is the size of the table, k is the key
+
+
+	//Use all letters of key
+		h(k) = (sum of ASCII values in Key) mod m
+	So, h(k) = keysize - 1
+	//this is a weak hashing function)
+
+	Use first three letters of a key & multiplier
+		Take the first three characters of every key, multiply them, add them together, and mod the result
+			26^3 possible keys with this (17576 possible keys)
+	Bottom line, a perfect hashing function is impossible
+
+Load Factor
+	The load factor of a non-empty hash table is the number of items stored in the table divided by the size of the table
+		loadfactor = M / N
+	Describes the amount of capcity which is to be exhausted for the Hashtable to increase its capacity
+	For example in Java, HashMap has a lost factor of 0.75
+		25% of the buckets will be free before there is an increase in the capacity
+	Lower load factor -> more free slots -> less collision -> high performance -> high space requirement
+
+Collision Resolution Methods
+	Collision is the state in which two different keys produce the same address
+	Collisions need to be resolved, so we use a linked list, and rehash each colliding value
+	Our hash function will be h(k) = k mod n (k is key value, n is array size)
+
+With deletion, and accessing and etc. we're talking keys, NOT indicies
+
+Final note for linked list implementation, you could use a balanced binary tree instead 
+
+Open Addressing: Linear Probing
+	How do we delete 9?
+
+		Deletion means we are mapping 
+
+Double hashing
+	The interval between probes is computed by a second hash function:
+
+Rehashing
+	Rehashing is required when the table gets too full, the average search time deteriorates from O(1) to O(n)
+	Create a larger table and then rehash all the elements into the new table
+	all records are stored in the hash tabl
+
+Open addressing
+	
+

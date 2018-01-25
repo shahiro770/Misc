@@ -1,0 +1,72 @@
+Algorithm Design Techniques (Lecture 15)
+
+An algorithm design technique is a genreal problem solving paradigm for a set of problems that share similar characteristics
+There is an overalpping between different algorithm design techniques (e.g. the same problem could be solved by more than one technique)
+Typically for a given problem one or more algorithms design techniques could solve this problem. However, usually one technique is superior than the other
+Some problems will require applying one or more algorithm deisgn technique
+
+The most common algorithms design techniques are:
+
+1. Brute Force
+	Code every edge case, try everything
+		10^4 combos for a password with 4 digits
+	Brute force, straightforward solution for any problem that attempts all candidate solutions in a systematic approach, without excluding any candidate solution
+	It is effortless 
+
+2. Divide and Conquer
+	Divide and conquer approach solve the problem by dividing the actual problem into several smaller subproblems, then independently solve each subproblem, finally coimbine the solutions of the subproblems to yield the solution of the original problem
+	If we divide the problem into m subproblems and solve all the m subproblems then this is a divide and conquer problem.
+	But if we end up solving only (m-i) subproblems, then this is a decrease and conquer problem
+		Binary search is a decrease and conquer, while mergesort is a divide and conquer
+3. Greedy Algorithms
+	A technique to find a solution for th eproblem through a sequence of steps and at each step, the algorithm makes the locally optimal choice at each stage with the hope of finding a global optimum
+	The algorithm solves th eproblem one step at a time and in each step selects the option that returns the most obvious and immediate benefits
+	Greedy algorithms are straightforward to design an implement but do not guarantee to find the optimal solution
+	Greedy algorithms work the best when the nature problem 
+	Difference between Dijkstra and Greedy?
+		Greedy cares about the present, Dijkstra keeps track of the past
+4. Dynamic PRogramming
+	Similar to divide and conquer. Divide into sub problems and solve each problem individually. But we store the problem, allowing us to reuse the solution on the duplicate sub problems
+5. Transform and Conquer
+	The problem is transformed (rperesented) into a more manageable and easy to solve representation
+	In general, the problem is transofrmed using one of the following methods:
+		1)
+		2)
+		3)
+6. Randomized Algorithms
+	Randomized algorithms apply some degree of randomization as part of its logic to solve a given problem
+	This technique usually helps solve complex problems where brute force technique could take infinite time to find the solution
+	Randomi
+7. Backtracking
+	A backtracking approach is an effective method to solve constraint satisfaction problems
+	Backtracking algorithms systematically examine all possible solutions and incrementally construct the solutions by combining different candidates as soon as it discovers that the combination of a candidate cannot possibly result in a valid solution it backtracks by eliminating the last added candidate
+	Backtrack algorithms reprsent the solution space as a search tree
+
+Recursive and Backtracking
+	When a function calls itself, itis called recursion
+	Recursion is useful in solving problem that cna be broken into smaller problems of the same type
+	Recursion is an algorithm implementation technique. In general, every recursion algorithm has an interative version
+	Writing an interative algorithm fo rproblems that are naturally recursive most of the time is difficult than writing a recursive algorithm
+
+Greedy Algorithm Example
+
+Your goal is to visit as many places as possible in Vancouver
+	Each place takes a different amount of time
+	How would you come up with a solution?
+		Simplest is to sort from minimum time to maximum time
+			Pick the minimums in ascending order
+	This works at this level, there's nothing else to worry about besides maximizing time travelled 
+
+Minimum Spanning Tree
+
+Given a graph G(V,E) the spanning tree is a tree in G that includes every vertex of G (span tree) and it is a subgraph of G (Every edge in the tree belongs to G)
+
+Minimum spanning trees have lots of applications, 
+
+Kurskal's Algorithm
+	Greedy algorithm that picks the edge with the lowest weight every time
+	Don't add edges that would result in a cycle (i.e. check if the vertex about to be added is already in a set with the object)
+
+Prim's Algorithm
+	Find the minimum spanning tree 
+	Note that it does matter which node you start from

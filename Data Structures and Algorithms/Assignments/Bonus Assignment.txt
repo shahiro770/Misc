@@ -1,0 +1,72 @@
+Shahir Chowdhury 2017-12-14 104598129
+
+Bonus Assignment (Put any marks towards the midterm)
+----------------
+
+Q2: (Using Dijkstra's, see other file)
+	Fastest Path from Windsor to Kingsville is Windsor -> Techumseh -> Lakeshore -> Kingsville
+	Fastest Path from Amherstburg to Leamington is Amherstburg -> Essex -> Lakeshore -> Leamington
+
+Q4: Normally (using coin denominations 1, 5, 10, and 25), a greedy algorithm would work by picking the largest denomination that isn't larger than the amount and subtracting that amount. Repeat with the next largest denomination that isn't larger than the new amount. Total the amount of times the denominations were removed to get your coin total. However this solution doesn't work for any arbitrary coin system. E.g. if we had S = {1, 5, 10, 11} and N = 20, the greedy algorithm would output {11, 5, 1, 1, 1, 1}, where the correct answer is acutally {10, 10}. It would also fail if a denomination was not available, such is the case for S = {3, 4} and N = 5. Hence, dynamic programming is the best way to find the solution, as not only do we keep track of the optimal substructures for specific totals (e.g. if we had S = {1, 5, 10, 11} and N = 20, the optimal sub structure is {10, 10}, but we can also make use of the overlapping subproblem of finding the best coin combination to get us closest to the total.
+
+Q5: Prim's Algorithm is a greedy algorithm because at each step, we are building a minimum spanning tree one vertex at a time using the lowest costing edge from the tree to another vertex. In otherwords, the algorithm is optimized locally in an attempt to find the global optimum, which makes it by definition a greedy algorithm.
+
+Q6: Stable: Insertion sort, merge sort, bubble sort
+	Unstable: Quick sort
+
+	A simple scheme to make any algorithm stable would be to change the comparison key method used to take position of elements into account (i.e. identical values will have the first identical value held higher than the next).
+
+Q7:	[5 7 4 3 2 9 8 6]
+	Pick 6 as pivot
+	[5 7 4 3 2 9 8 6] i = -1, j = 0, increment i and swap array[i] with array[j] because array[j] <= 6
+	[5 7 4 3 2 9 8 6] i = 0, j = 1, no swap because array[j] > 6
+	[5 4 7 3 2 9 8 6] i = 0, j = 2, increment i and swap array[i] with array[j] because array[j] <= 6
+	[5 4 3 7 2 9 8 6] i = 1, j = 3, increment i and swap array[i] with array[j] because array[j] <= 6
+	[5 4 3 2 7 9 8 6] i = 2, j = 4, increment i and swap array[i] with array[j] because array[j] <= 6
+	[5 4 3 2 7 9 8 6] i = 3, j = 5, no swap because array[j] > 6
+	[5 4 3 2 7 9 8 6] i = 3, j = 6, no swap because array[j] > 6
+	[5 4 3 2 6 9 8 7] i = 3, j = 6, final swap with array[i+1] and array[pivot]
+	Pick 2 as pivot, in range from [0 to 3]
+	[5 4 3 2 6 9 8 7] i = -1, j = 0, no swap because array[j] > 2
+	[5 4 3 2 6 9 8 7] i = -1, j = 1, no swap because array[j] > 2
+	[5 4 3 2 6 9 8 7] i = -1, j = 2, no swap because array[j] > 2
+	[2 4 3 5 6 9 8 7] i = -1, j = 2, final swap with array[i+1] and array[pivot]
+	Pick 5 as pivot in range from [1 to 3]
+	[2 4 3 5 6 9 8 7] i = 0, j = 1, increment i and swap array[i] with array[j] because array[j] <= 5
+	[2 3 4 5 6 9 8 7] i = 1, j = 2, increment i and swap array[i] with array[j] because array[j] <= 5
+	[2 3 4 5 6 9 8 7] i = 2, j = 2, final swap with array[i+1] and array[pivot]
+	Pick 7 as pivot in range from [4 to 7]
+	[2 3 4 5 6 9 8 7] i = 3, j = 4, increment i and swap array[i] with array[j] because array[j] <= 7
+	[2 3 4 5 6 9 8 7] i = 4, j = 5, no swap because array[j] > 7
+	[2 3 4 5 6 9 8 7] i = 4, j = 6, no swap because array[j] > 7
+	[2 3 4 5 6 7 8 9] i = 4, j = 6, final swap with array[i+1] and array[pivot]
+	Done sort
+
+Q9: See other file
+
+Q10: public int height(){ //returns the maximum depth of the tree
+		int count = 0; //counter to keep track of the depth of each individual element
+		int currmax = 0; //the current highest depth on the tree
+		return height(count,currmax,root);
+	}
+	public int height(int count,int currmax, BNode branch){ //overload
+		if (branch == null){
+			return count;
+		}
+		else{
+			if (branch.getLeft() == null){ //go right if left is empty
+				currmax = Math.max(height(count+1,currmax,branch.getRight()),currmax); //set current highest to the current element's depth if it is greater
+			}
+			else if (branch.getRight() == null){ //go left if right is empty
+				currmax = Math.max(height(count+1,currmax,branch.getLeft()),currmax);
+			}
+			else{ //if both pathes are not empty
+				currmax = Math.max(height(count+1,currmax,branch.getLeft()), height(count+1,currmax,branch.getRight())); //take highest between both pathes
+				currmax = Math.max(count,currmax); //take highest between the counter and current max values	
+			}
+		}
+		return currmax;
+	}
+	Run time complexity is O(log n)
+
+

@@ -1,0 +1,72 @@
+Lecture 3 Stacks
+
+A stack is a linear data structure similar to arrays and linked list
+	The stack defines one restriction voer elements insertion and deletion
+		The elements are added and revmoved from the stack at one end
+		The last element inserted is the first element to be removed fromt he stack
+		The way the stack handle elements insertion and deletion is called Last in First Out (LIFO) and First in Last Out (FILO)
+	The insertion of an element into the stack called a push operation and the deletion of an element from the stack called a pop operation
+
+
+How does the stack work?
+	We need a special pointer or index called top
+		We add and remove elements to/from the top  of the stack
+	Trying to add an element to a full stack result in overflow condition
+	Trying to remove an element from an empty stack result in underflow condition
+Good example: ctrl z in a text editor
+
+Many real-life applications require stack behaviour (LIFO) structures
+	1) Execution or call Stack
+		All memory allocated for your virtual machine in java gets filled, causing the stack to overflow
+	2) Balancing of symbols
+	3) Undo operations in IDEs, Text editors, etc
+	4) Retrieving social network history (e.g. facebook posts, tweets, etc.)
+	5) Evaluation of polish notation (e.g. 3 * 52)
+	6) Matching tags markup languages (e.g. HTML, XML)
+	7) Graph traversing algorithms (e.g. Depth First Search)
+
+Operations the Stack Must Be Able to Do:
+	1) Push element (event) into the stack
+	2) Pop Element (event) from the stack
+	3) Initialize the stack
+	4) Check if the stack is full
+	5) Check if the stack is empty
+	6) Measure the size of the stack
+	7) Processing stack elements
+	8) Delete all elements in the stack
+	9) Check the top of the stack
+
+Bob decided to implement the stack (ADT) using an array. In this case elements will be added from the left to right and a variable top is use dto track the stack top 
+
+* Arrays are a reallocation of memory that will stay for as long as the program is running * 
+
+	Stack's getSize is O(1) (its just the value at the top)
+
+Bob wants to provide Alice with a feature that allows her to traverse the elements in the stack without removing them
+	This will allow Alice to process the elements when needed for example, to odisplay the elements, store them into a file or database, etc.
+		Bob does not know what Alice exactly going to do and wants to provide access flexibility to Alice
+
+Run-Time Complexity
+	The run time compelxity of the stack operations with array-based implementation are all O(1):
+		Push 				
+		Pop
+		Stack Size
+		Is Empty
+		Is Full
+		Delete/Empty Stack
+
+Abstract data type is a mathematical and logical model for data types
+	THe data type is defined by its behvaiours (operations) from the user point of view
+	The implementation details are hidden from the users
+	Bob implements a Stack ADT for Alice
+		Alice is the user of Bob's Stack and Bob is the Stack ADT Implementor
+			Bob is responsible for providing the user 
+
+Pre and Post Conditions
+	While Alice does not need to know the implementation details of the Stack operations, she needs to know the pre-conditions and post conditions of the Stack operations as part of the specification
+		For example, the pre conditions of the push operation are stack must be initiliazed and not full
+			The post conditions are the element added to the top of the stack and the stack top increased by one
+	When implementing any data structure, know what structures to implement
+In your opinoin, what are the limitations and advnatages of using an array-based approach to implement a Stack ADT?
+	Using a stack data structure design an algorithm to check if a given equatino or expression has balanced symbols or not
+		
