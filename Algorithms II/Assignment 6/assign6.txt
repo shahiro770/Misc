@@ -1,0 +1,192 @@
+Script started on Sun Apr  9 18:20:45 2017
+[?1034hbash-3.2$ cat assign6.c
+/* 	
+	assign6.c
+	Shahir Chowdhury
+	Date last modified: 2017-04-05
+	This program reads the grade information of a set of students and creates a file with each student's GPA whilst placing
+	the student information in ascending order in accordance with their student ID.  
+*/
+
+//INCLUDES
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+//STRUCTS
+struct StudentGrades{ 					//contains information pertaining to a student's grades and GPA
+	int studentID;						//assumed to be 6 digits
+	float courseMarks[10];				//values in all 10 positions are assumed to be between 0.0 and 100.0
+	float GPA; 							//GPA is calculated as the average of all marks scaled to be between 0.0 and 4.0
+};
+typedef struct StudentGrades StudGrades;
+
+//PROTOTYPES
+int getEntryNum(char *filename);		//gets the number of records in the input file
+float getGPA(StudGrades stud);			//gets the GPA of a given student
+
+//MAIN
+int main (void){
+	FILE *fptrIn, *fptrOut, *fptrResults;
+
+	int recNum;			//number of records in input file
+	int bytesIn = 0;	//size in bytes of the input file
+	int bytesOut = 0;	//size in bytes of the output file
+
+	char *inputName = "assign6.dat";			//input file is assumed to exist 
+	char *outputName = "assign6out.dat";		//output file
+	char *resultsName = "assign6results.dat";	//results file
+	char *tokenPtr;
+
+	StudGrades temp;	//StudGrades structure to hold information during analysis
+	StudGrades curr;	//StudGrades structure to hold information during sorting
+	StudGrades comp;	//StudGrades structure to hold information during sorting
+
+	recNum = getEntryNum(inputName);
+
+	fptrIn = fopen(inputName, "r");
+	fptrOut = fopen(outputName , "w+");
+	fptrResults = fopen (resultsName , "w");
+
+	fseek(fptrIn, 0, SEEK_END);
+	bytesIn = ftell(fptrIn);	
+	fseek(fptrIn, 0, SEEK_SET);
+	
+	char currstr[1000];						//arbitrarily large string, assumes any line in the input won't exceed 1000 characters
+	memset(currstr, 0, sizeof(currstr));
+
+	for (int i=0;i<recNum;i++){				//extract the contents of the input file and store them in an output file
+		fgets(currstr,sizeof(currstr), fptrIn);
+
+		tokenPtr = strtok(currstr, "\n");
+		while (tokenPtr != NULL){
+			sscanf(currstr, "%d %f %f %f %f %f %f %f %f %f %f", &(temp.studentID), 
+			&(temp.courseMarks[0]), &(temp.courseMarks[1]), &(temp.courseMarks[2]),
+			&(temp.courseMarks[3]), &(temp.courseMarks[4]), &(temp.courseMarks[5]),
+			&(temp.courseMarks[6]), &(temp.courseMarks[7]), &(temp.courseMarks[8]),
+			&(temp.courseMarks[9]));
+			tokenPtr = strtok(NULL, "\n");
+		}
+		temp.GPA = getGPA(temp);
+		
+		fwrite(&temp, sizeof(temp), 1, fptrOut);
+		bytesOut += sizeof(temp);
+	}
+
+	fseek(fptrOut, 0, SEEK_SET);
+
+	for (int i=0;i<recNum;i++) {									//perform an in place bubble sort of the contents of the output file
+     	for (int j=0;j<(recNum - 1);j++){
+     		fseek(fptrOut, j * sizeof(StudGrades), SEEK_SET);
+     		fread(&curr, sizeof(StudGrades), 1 ,fptrOut);
+     		fread(&comp, sizeof(StudGrades), 1 ,fptrOut);
+     		if (curr.studentID > comp.studentID){
+     			fseek(fptrOut, j * sizeof(StudGrades), SEEK_SET);
+     			fwrite(&comp, sizeof(StudGrades), 1, fptrOut);
+     			fwrite(&curr, sizeof(StudGrades), 1, fptrOut);
+     		}
+     	}
+    }
+
+    fseek(fptrOut, 0, SEEK_SET);									//write the sorted student grade information to the results file,
+    for (int i=0; i< recNum;i++){									//including the size of the input and output file
+	    fread(&temp, sizeof(temp), 1, fptrOut);
+	    fprintf(fptrResults, "%06d %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f %.1f\n", temp.studentID, 
+			temp.courseMarks[0], temp.courseMarks[1], temp.courseMarks[2],
+			temp.courseMarks[3], temp.courseMarks[4], temp.courseMarks[5],
+			temp.courseMarks[6], temp.courseMarks[7], temp.courseMarks[8],
+			temp.courseMarks[9], temp.GPA);
+    }
+    fprintf(fptrResults, "%d\n%d", bytesIn, bytesOut);
+
+    fclose(fptrIn);
+    fclose(fptrOut);
+    fclose(fptrResults);
+
+}
+
+//FUNCTION DEFINITIONS
+/* 
+	Objective: Finds the number of entries within the file containing student information
+	Input: filename is assumed to be a valid file containing the required information
+		   A newline character '\n' is assumed to be at the end of every line except for the final line
+	Output: Gets the number of student grade information entries in the file
+*/
+int getEntryNum(char *filename){
+	int entryNum = 0;
+	int ch = 0;
+	FILE *fptr;
+
+	fptr = fopen(filename, "r");
+	if (fptr == NULL){	//if file is empty
+		return entryNum;
+	}
+
+	while (!feof(fptr)){
+		ch = fgetc(fptr);
+		if (ch == '\n'){
+			entryNum++;
+		}
+	}
+
+	/*Last line is ignored due to not ending with a newline character.
+	Assuming newline characters are the signal for a succeeding record, 
+	check if the file was empty at the start. If not empty, assume there is at least one more line of information.*/
+	fseek(fptr, 0, SEEK_SET);
+	if ((fptr != NULL) && (entryNum > 0)){		
+		entryNum++;
+	}
+	else if ((fptr != NULL) && (entryNum == 0)){
+		entryNum++;
+	}	
+	fclose(fptr);
+
+	return entryNum;
+}
+
+/* 
+	Objective: Get the GPA of the student 
+	Input: stud is assumed to have float values between 0.0 and 100.0 in all 10 of their courses
+	Output: Returns the GPA of the student
+*/
+float getGPA(StudGrades stud){
+	int tot = 0;
+	float GPA; 
+	for (int i=0;i<10;i++){
+		tot += stud.courseMarks[i];
+	}
+
+	GPA = (tot/10) * 0.04;	//cool math
+
+	return GPA;
+}bash-3.2$ ls -l
+total 40
+-rw-r--r--@ 1 shahirchowdhury  staff  5325  9 Apr 18:20 assign6.c
+-rw-r--r--@ 1 shahirchowdhury  staff   569  5 Apr 01:38 assign6.dat
+-rw-r--r--  1 shahirchowdhury  staff  4139  9 Apr 18:20 assign6.txt
+bash-3.2$ gcc assign6.c
+bash-3.2$ ./a.out
+bash-3.2$ cat assign6results.dat
+000000 99.9 99.8 99.7 99.6 99.5 99.4 99.3 99.2 99.1 99.0 4.0
+111111 98.9 78.9 97.6 91.0 98.9 87.9 93.6 89.0 96.7 99.9 3.7
+222222 78.9 68.9 87.6 71.0 72.3 78.1 83.6 81.0 94.7 80.7 3.2
+333333 58.2 68.9 79.3 67.2 52.6 63.7 53.6 59.3 69.0 69.9 2.5
+444444 78.3 87.9 79.4 79.2 76.9 75.2 82.6 88.1 90.2 88.3 3.3
+555555 88.1 79.6 89.2 82.0 87.9 92.8 73.2 99.0 87.4 79.4 3.4
+666666 58.2 68.9 79.3 52.6 63.7 53.6 59.3 69.0 69.9 95.2 2.6
+777777 94.9 78.9 97.6 90.0 96.8 87.9 83.6 87.0 86.7 94.9 3.6
+888888 73.9 78.9 76.4 73.0 79.6 77.2 81.4 86.3 89.4 90.7 3.2
+999999 60.7 14.6 39.1 49.0 26.9 42.8 53.2 39.0 45.4 16.4 1.5
+569
+480bash-3.2$ ls -l
+total 80
+-rwxr-xr-x  1 shahirchowdhury  staff  9180  9 Apr 18:21 a.out
+-rw-r--r--@ 1 shahirchowdhury  staff  5325  9 Apr 18:20 assign6.c
+-rw-r--r--@ 1 shahirchowdhury  staff   569  5 Apr 01:38 assign6.dat
+-rw-r--r--  1 shahirchowdhury  staff  5815  9 Apr 18:21 assign6.txt
+-rw-r--r--  1 shahirchowdhury  staff   480  9 Apr 18:21 assign6out.dat
+-rw-r--r--  1 shahirchowdhury  staff   617  9 Apr 18:21 assign6results.dat
+bash-3.2$ exit
+exit
+
+Script done on Sun Apr  9 18:21:48 2017

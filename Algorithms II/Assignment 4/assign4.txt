@@ -1,0 +1,315 @@
+Script started on Sat Mar 25 23:54:49 2017
+[?1034hbash-3.2$ cat assign4.c
+/* 	
+	assign4.c
+	Shahir Chowdhury
+	2017-03-25
+	This program reads and stores course information and allows a user to modify the information stored
+*/
+
+//INCLUDES
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+//STRUCTS
+struct CourseInfo{ 
+	int courseID;
+	char courseName[50]; 
+	char courseCode[12]; 
+	char Term [6];
+};
+typedef struct CourseInfo courseInfo;
+
+//PROTOTYPES
+void loadCourseInfo(char *filename, courseInfo *courselist, int len);	//loads course information from a file 
+void displayCourseInfo(courseInfo *courselist, int len);				//displays course information
+void addCourseInfo(courseInfo *courselist, int *len);					//store user inputted course information
+void searchCourseInfo(courseInfo *courselist, int len);					//lets user decide how to search for course info
+void searchCourseInfoID(courseInfo *courselist, int len);				//searches for a specific course by course ID 
+void searchCourseInfoName(courseInfo *courselist, int len);				//searches for a specific course or multiple courses by name
+int getEntryNum(char *filename);										//gets the number of entries in the course information file
+void displayMenu(courseInfo *courselist, int len);						//lets the user manipulate the information with an interactive menu
+
+//MAIN
+int main (void){
+	int num = 0;
+	int len = getEntryNum("input.csv");
+
+	courseInfo courselist[100];					//arbitrarily large number to hold an arbitrarily large number of records
+	memset(courselist, 0, sizeof(courseInfo));
+	loadCourseInfo("input.csv", courselist, len);
+
+	while (1){
+		displayMenu(courselist, len);
+		scanf("%d", &num);
+		switch (num){
+			case 1:
+				addCourseInfo(courselist, &len);
+				break;
+			case 2:
+				searchCourseInfo(courselist, len);
+				break;
+			case 3:
+				return 0;
+				break;
+			default:
+				printf("Please pick one of the available options\n");
+				break;
+		}
+	}
+	
+	return 0;
+}
+
+//FUNCTION DEFINITIONS
+/* 
+	Objective: Loads course information from a csv file
+	Input: The file containing the information is assumed to have the title "input.csv" 
+		   and in the format "CourseName,Faculty,Subject,Level,Section,Semester,Year".
+		   len is the number of records contained in the file
+	Output: Stores the records in an array of courseInfo structs
+*/
+void loadCourseInfo(char *filename, courseInfo *courselist, int len){
+	FILE *fptr;
+
+	char courseName[50];
+	char faculty[3];
+	char subject[3];
+	char level[4];
+	char section[3];
+	char semester[2];
+	char year[5];
+
+	fptr = fopen(filename, "r");
+	for (int i=0;i<len;i++){
+		fscanf (fptr,"%49[^,],%2[^,],%2[^,],%3[^,],%2[^,],%1[^,],%4[^,\n]\n", courseName, faculty, subject, level, section, semester, year);
+
+		courselist -> courseID = i+1;
+
+		for (int j=0;j<strlen(courseName);j++){		//format the words so that they are always in uppercase
+			courseName[j] = toupper(courseName[j]);
+		}
+
+		strcpy(courselist -> courseName, courseName);
+		
+		strcpy(courselist -> courseCode, faculty);
+		strncat(courselist -> courseCode, subject,2);
+		strcat(courselist -> courseCode, "-");
+		strncat(courselist -> courseCode, level,3);
+		strcat(courselist -> courseCode, "-");
+		strncat(courselist -> courseCode, section,2);
+
+		strcpy(courselist -> Term, semester);
+		strcat(courselist -> Term, year); 
+
+		courselist++;
+	}
+
+	fclose (fptr);
+	return;
+}
+
+/* 
+	Objective: Display all courses and the information that pertains to them in a tabular format
+	Input: courselist is a list of courseInfo structs
+		   len is the number of courses within the array
+	Output: Prints each course's information
+*/
+void displayCourseInfo(courseInfo *courselist, int len){
+	printf("%-4s%-50s%-12s%-6s\n","ID", "Name", "Code", "Term");
+
+	for (int i=0;i < len;i++){
+		printf("%-4d%-50s%-12s%-5s\n",courselist[i].courseID, courselist[i].courseName, courselist[i].courseCode,courselist[i].Term);
+	}
+	printf("\n");
+	return;
+}
+
+/* 
+	Objective: Adds a user inputted course to where the course information is stored
+	Input: courselist is a list of courseInfo structs
+		   len is the number of courses within the array
+		   The user inputted course is assumed to follow the same format as the currently loaded courses
+		   Inputted Courses with identical course information are rejected
+	Output: Stores the user inputted course inside the course list
+*/
+void addCourseInfo(courseInfo *courselist, int *len){
+	courseInfo temp = {.courseID = *len + 1, .courseName = "", .courseCode = "", .Term = ""};
+
+	printf("What is the course?\n");
+	scanf("%s %s %s", temp.courseName, temp.courseCode, temp.Term);
+
+	for (int i=0;i<strlen(temp.courseName);i++){			//uppercase for consistency in formatting
+		temp.courseName[i] = toupper(temp.courseName[i]);
+	}
+	for (int i = 0;i<*len;i++){
+		if (strcmp(temp.courseCode, courselist[i].courseCode) == 0){
+			printf("Duplicate course! Cannot be added to the list!\n");
+			return;
+		}
+	}
+	courselist[*len] = temp;
+	*len += 1;
+
+	return;
+}
+
+/* 
+	Objective: Searches the course information list for a specific course
+	Input: User may either search for a course via course ID or course name
+	Output: Calls one of the specialized searching functions depending on the user's inputted
+*/
+void searchCourseInfo(courseInfo *courselist, int len){
+	int method = 0;
+
+	printf("Will you search by (1) course ID or by (2) course name? ");
+	scanf("%d", &method);
+
+	if (method == 1){
+		searchCourseInfoID(courselist, len);
+	}
+	else if (method == 2){
+		searchCourseInfoName(courselist, len);
+	}
+	else{
+		printf("That was not an option!\n");
+	}
+
+	return;
+}
+
+/* 
+	Objective: Searches the course information list for a course based on course ID
+	Input: courselist is a list of courseInfo structs
+		   len is the number of courses within the array
+		   Inputted ID is assumed to be an integer
+	Output: Displays a course with the matching ID if found
+*/
+void searchCourseInfoID(courseInfo *courselist, int len){
+	int ID;
+	int notfound = 0;	//flag for if the information was found
+	printf("What is the course's ID? ");
+	scanf("%d", &ID);
+
+	for (int i = 0;i<len;i++){
+		if (courselist[i].courseID == ID){
+			printf("%d %s %s %s\n", courselist[i].courseID, courselist[i].courseName, courselist[i].courseCode, courselist[i].Term);
+			notfound = 1;
+		}
+	}
+	if (notfound == 0){
+		printf("A course with that ID could not be found\n");
+	}
+	return;
+}
+
+/* 
+	Objective: Searches the course information list for a course based on course name
+	Input: courselist is a list of courseInfo structs
+		   len is the number of courses within the array 
+		   The inputted course name is assumed to be uppercase
+	Output: Displays any course with the matching name if found
+*/
+void searchCourseInfoName(courseInfo *courselist, int len){
+	char name[50];
+	int notfound = 0;	//flag for if the information was found
+	printf("What is the course's name? ");
+	scanf("%s", name);
+
+	for (int i = 0;i<len;i++){
+		if (strcmp(courselist[i].courseName, name) == 0){
+			printf("%d %s %s %s\n", courselist[i].courseID, courselist[i].courseName, courselist[i].courseCode, courselist[i].Term);
+			notfound = 1;
+		}
+	}
+	if (notfound == 0){
+		printf("A course with that name could not be found\n");
+	}
+	return;
+}
+/* 
+	Objective: Finds the number of entries within the file containing course information
+	Input: filename is assumed to be a valid CSV file with the information formatted as "CourseName,Faculty,Subject,Level,Section,Semester,Year"
+		   A newline character '\n' is assumed to be at the end of every line except for the final line
+	Output: Gets the number of course information entries in the file
+*/
+int getEntryNum(char *filename){
+	int entryNum = 0;
+	int ch = 0;
+	FILE *fptr;
+
+	fptr = fopen(filename, "r");
+	if (fptr == NULL){	//if file is empty
+		return entryNum;
+	}
+
+	while (!feof(fptr)){
+		ch = fgetc(fptr);
+		if (ch == '\n'){
+			entryNum++;
+		}
+	}
+
+	/*Last line is ignored due to not ending with a newline character.
+	Assuming newline characters are the signal for a succeeding line of course information,
+	check if the file was empty at the start. If not empty, assume there is at least one more line of information.*/
+	fseek(fptr, 0, SEEK_SET);
+	if ((fptr != NULL) && (entryNum > 0)){		
+		entryNum++;
+	}
+	else if ((fptr != NULL) && (entryNum == 0)){
+		entryNum++;
+	}	
+	fclose(fptr);
+
+	return entryNum;
+}
+
+/* 
+	Objective: Displays the options the user has to manipulate the data with
+	Input: courselist is a list of courseInfo structs
+		   len is the number of courses within the array 
+	Output: Displays the options the user has to manipulate the data with
+*/
+void displayMenu(courseInfo *courselist, int len){
+	printf("\n");
+	printf("-----------------------------------SELECT AN OPTION-----------------------------------\n");
+	displayCourseInfo(courselist, len);
+	printf("1) Add course information\n");
+	printf("2) Search course information\n");
+	printf("3) Exit");
+	printf("\n");
+	printf("-----------------------------------SELECT AN OPTION-----------------------------------\n");
+
+	return;
+}
+bash-3.2$ cat input.csv
+programming,03,60,141,01,W,2015
+programming,03,60,141,30,W,2015
+Algebra,03,62,102,02,S,2013
+Religion,08,98,938,20,F,2014bash-3.2$ cc assign4.c
+bash-3.2$ ./a.out
+
+-----------------------------------SELECT AN OPTION-----------------------------------
+ID  Name                                              Code        Term  
+1   PROGRAMMING                                       0360-141-01 W2015
+2   PROGRAMMING                                       0360-141-30 W2015
+3   ALGEBRA                                           0362-102-02 S2013
+4   RELIGION                                          0898-938-20 F2014
+
+1) Add course information
+2) Search course information
+3) Exit
+-----------------------------------SELECT AN OPTION-----------------------------------
+^C
+bash-3.2$ ls -l
+total 88
+-rwxr-xr-x  1 shahirchowdhury  staff  13804 25 Mar 23:55 a.out
+-rw-r--r--@ 1 shahirchowdhury  staff   8865 25 Mar 23:49 assign4.c
+-rw-r--r--  1 shahirchowdhury  staff   8235 25 Mar 23:55 assign4.txt
+-rw-r--r--@ 1 shahirchowdhury  staff    120 25 Mar 21:10 input.csv
+bash-3.2$ exit
+exit
+
+Script done on Sat Mar 25 23:55:19 2017
