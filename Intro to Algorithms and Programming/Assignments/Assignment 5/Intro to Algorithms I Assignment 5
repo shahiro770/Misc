@@ -1,0 +1,39 @@
+Shahir Chowdhury
+Student Number: 104598120
+Course: 03-60-140-01
+2016-11-16
+
+Intro to Algorithms & Programming I Assignment 5
+
+1. The two errors are:
+	1) product is being initialized outside of the function (must be initialized inside)
+	2) height parameter in the function is missing a type (must be declared with a numeric type)
+
+Correct Version:
+
+	double triangle_area (double base, double height)
+	{
+		double product;
+		product = base * height;
+		return product / 2;
+	}
+
+2. 	a) Legal
+	b) Legal
+	c) Legal
+	d) Legal
+	e) Legal
+
+3. See a5_gcd_recursive.rap
+
+4. See a5_gcd_recursive.c
+
+5. You can have a maximum of infinity + 2 i declarations:
+	-1 i declaration as a global variable (static storage variable and file scope)
+	-1 i declaration as a local variable to main
+	-Infinitely many i declarations in if statements that are containted inside one another (automatic variables with deeper and deeper block scope)
+
+	Out of all these i variables, the i variables scoped inside the main function should always be avoided to improve software maintainability. These i variables contained inside if statements of increasing depth are confusing for readers to understand and are often messy as a result of the depth. There is also little meaning to the names of each of those i variables, indicating a lack of clarity in such code.
+
+6. See a5_poker.c
+

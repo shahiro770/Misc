@@ -1,0 +1,23 @@
+Shahir Chowdhury
+Student Number: 104598120
+Course: 03-60-140-01
+2016-10-24
+
+Intro to Algorithms & Programming I Assignment 3
+1. 
+teenage = false;
+
+if (age >= 13 && age <=19)
+teenage = true;
+
+2. See a3_numberToWord.c
+3. a) 1 2 4 8 16 32 64 128 
+   b) 9384 938 93 9 
+   c) 5 4 3 2 
+4. a) 1:Hello!
+      2:
+   b) 1 2 3 4 5 6 7 8 9 10
+   c) 1 2 3 4 5 6 7 8 9 10
+   d) 10 3.1623 1.7783 1.3335 1.1548 1.0746 1.0366 1.0182 1.0090 1.0045 1.0023 1.0011 
+5. See a3_epsilon0
+6. See a3_epsilon1
